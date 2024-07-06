@@ -6,17 +6,17 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('books_manager', '0001_initial'),
+        ("books", "0001_initial"),
     ]
 
     operations = [
         migrations.RenameModel(
-            old_name='LibraryVisitor',
-            new_name='Visitor',
+            old_name="LibraryVisitor",
+            new_name="Visitor",
         ),
         migrations.AlterField(
-            model_name='borrowrecord',
-            name='return_date',
+            model_name="borrowrecord",
+            name="return_date",
             field=models.DateTimeField(default=None, null=True),
         ),
     ]

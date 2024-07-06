@@ -1,7 +1,7 @@
 {% if books_list %}
     <ul>
     {% for book in books_list %}
-    <li><a href="{% url 'books_manager:detail' book.id %}">{{ book.title }}</a></li>
+    <li><a href="{% url 'books:detail' book.id %}">{{ book.title }}</a></li>
 
     {% endfor %}
     </ul>

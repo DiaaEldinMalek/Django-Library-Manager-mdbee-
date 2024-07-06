@@ -6,4 +6,4 @@ from .models import Book, Visitor, BorrowRecord
 def index(request):
 
     available_books = Book.objects.all()
-    return render(request, "books_manager/index.html", {"books_list": available_books})
+    return render(request, "books/index.html", {"books_list": available_books})
