@@ -1,3 +1,8 @@
 from django.contrib import admin
+from .models import Book, Visitor, BorrowRecord
 
-# Register your models here.
+admin.site.register(Book)
+
+admin.site.register(Visitor)
+
+admin.site.register(BorrowRecord)
