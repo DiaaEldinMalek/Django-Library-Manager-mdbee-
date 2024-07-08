@@ -1,7 +1,12 @@
 {% if books_list %}
     <ul>
-    {% for book in books_list %}
-    <li><a href="{% url 'books:detail' book.id %}">{{ book.title }}</a></li>
+    {% for book in books_list%}
+    <li><a href="{% url 'books:detail' book.id %}">{{ book.title }}</a>  by {{book.author}}
+        {% if book.is_available %}
+            <b style="color:green;"> - Available</b> </li>
+        {% else %}
+            <b style="color:red;"> - Unavailable</b> </li>
+            {% endif %} 
 
     {% endfor %}
     </ul>
