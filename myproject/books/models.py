@@ -13,38 +13,55 @@ class Book(models.Model):
     is_available = models.BooleanField(default=True)
 
     def __str__(self) -> str:
-        return self.title
+        return f"{self.title}, available:{self.is_available}"
 
     def current_borrower(self):
+        """Return the last BorrowRecord if the book is currently borrowed. Otherwise, book is available and return None"""
         if self.is_available:
             return None
 
         try:
-            last_borrow_record: BorrowRecord = self.borrowrecord_set.all()[0]  # type: ignore
+            last_borrow_record: BorrowRecord = self.borrowrecord_set.all().order_by("-borrow_date")[0]  # type: ignore
+            if not last_borrow_record.is_returned():
+                print(last_borrow_record)
+                return last_borrow_record
         except IndexError:
-            self.is_available = True
-            return None
-
-        if last_borrow_record.return_date is None:
-            # book has not been returned and return date is not specified
-            return last_borrow_record
-
-        elif last_borrow_record.return_date > timezone.now():
-            # return date is still in the future
-            return last_borrow_record
-
-        elif last_borrow_record.return_date < timezone.now():
             # realistically, the book can be unavailable for many other reasons (stolen, destroyed, etc.)
             # but for my application I will strictly assume that no such cases exist and that this is a database fault
+            pass
+
+        self.is_available = True
+        self.save()
+        return None
+
+    def borrow(self, borrower_name: str):
+        try:
+            if self.is_available:
+                self.borrowrecord_set.create(borrower_name=borrower_name)
+                self.is_available = False
+                self.save()
+                return True, "Book borrowed successfuly"
+            else:
+                return False, "Book Unavailable for borrowing"
+        except Exception as e:
+            return False, str(e)
+
+    def return_book(self):
+        try:
+            record: BorrowRecord = self.borrowrecord_set.all().order_by("-borrow_date")[
+                0
+            ]
+            record.return_now()
+            record.save()
+
             self.is_available = True
-            return None
+            self.save()
 
-
-class Visitor(models.Model):
-    name = models.CharField(max_length=100)
-
-    def __str__(self) -> str:
-        return self.name
+            return True, "Book returned successfuly"
+        except IndexError:
+            return False, "Book is not borrowed by anyone"
+        except Exception as e:
+            return False, str(e)
 
 
 class BorrowRecord(models.Model):
@@ -53,3 +70,28 @@ class BorrowRecord(models.Model):
     # borrower = models.ForeignKey(Visitor, on_delete=models.SET_NULL, null=True)
     borrow_date = models.DateTimeField(auto_now_add=True)
     return_date = models.DateTimeField(default=None, null=True)
+
+    def __str__(self) -> str:
+        return f"borrower:{self.borrower_name} | borrow_date:{self.borrow_date} | {f'return_date:{self.return_date}' if self.return_date else 'Not yet returned' }"
+
+    def return_now(self):
+        if self.return_date is None:
+            self.return_date = timezone.now()
+        else:
+            raise Exception("BorrowRecord already closed")
+
+    def is_returned(self):
+        if self.return_date is None:
+            # book has not been returned and return date is not specified
+            return False
+
+        elif self.return_date > timezone.now():
+            # return date is still in the future
+            return False
+
+        elif self.return_date < timezone.now():
+            # realistically, the book can be unavailable for many other reasons (stolen, destroyed, etc.)
+            # but for my application I will strictly assume that no such cases exist and that this is a database fault
+            return True
+        else:
+            raise Exception(f"Invalid value for field {self.return_date}")

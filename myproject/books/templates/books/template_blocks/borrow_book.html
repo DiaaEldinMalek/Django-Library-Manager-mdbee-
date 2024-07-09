@@ -1,1 +1,8 @@
-<b style="color:blue;"></b>Borrow now <a href="{% url 'books:detail' book.id %}">{{ book.title }}</a> 
+<form action="{% url 'books:borrow_book' book.id %}" method="post">
+    {% csrf_token %}
+    <fieldset>
+        <label for="borrower_name">Borrower Name</label><br>
+        <input type="text" name="borrower_name" id="borrower_name">
+    </fieldset>
+    <input type="submit" value="Borrow now">
+</form>
