@@ -13,7 +13,7 @@ class Book(models.Model):
     is_available = models.BooleanField(default=True)
 
     def __str__(self) -> str:
-        return f"{self.title}, available:{self.is_available}"
+        return self.title
 
     def current_borrower(self):
         """Return the last BorrowRecord if the book is currently borrowed. Otherwise, book is available and return None"""
@@ -23,7 +23,6 @@ class Book(models.Model):
         try:
             last_borrow_record: BorrowRecord = self.borrowrecord_set.all().order_by("-borrow_date")[0]  # type: ignore
             if not last_borrow_record.is_returned():
-                print(last_borrow_record)
                 return last_borrow_record
         except IndexError:
             # realistically, the book can be unavailable for many other reasons (stolen, destroyed, etc.)
@@ -67,7 +66,6 @@ class Book(models.Model):
 class BorrowRecord(models.Model):
     book = models.ForeignKey(Book, on_delete=models.SET_NULL, null=True)
     borrower_name = models.CharField(max_length=100)
-    # borrower = models.ForeignKey(Visitor, on_delete=models.SET_NULL, null=True)
     borrow_date = models.DateTimeField(auto_now_add=True)
     return_date = models.DateTimeField(default=None, null=True)
 
