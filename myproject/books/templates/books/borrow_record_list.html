@@ -1,0 +1,34 @@
+<!-- myapp/templates/borrow_record_list.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Borrow Records</title>
+</head>
+<body>
+    <h1>Borrow Records</h1>
+    <form method="get">
+        {{ form.as_p }}
+        <button type="submit">Filter</button>
+    </form>
+    <table>
+        <thead>
+            <tr>
+                <th>Book</th>
+                <th>Borrower Name</th>
+                <th>Borrow Date</th>
+                <th>Return Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for record in borrow_records %}
+            <tr>
+                <td>{{ record.book }}</td>
+                <td>{{ record.borrower_name }}</td>
+                <td>{{ record.borrow_date }}</td>
+                <td>{{ record.return_date }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>
