@@ -1,10 +1,12 @@
 from django.shortcuts import render, get_object_or_404
-from django.http import HttpResponseRedirect
-from .models import Book, BorrowRecord
+from django.http import HttpResponseRedirect, HttpRequest
 from django.urls import reverse
+from django.contrib.auth.decorators import login_required
+from .models import Book
 from .forms import BorrowRecordFilterForm
 
 
+@login_required()
 def index(request):
 
     all_books = Book.objects.all()
@@ -17,16 +19,22 @@ def index(request):
     return render(request, "books/index.html", context)
 
 
-def detail(request, book_id):
+@login_required()
+def detail(request: HttpRequest, book_id):
     book = get_object_or_404(Book, pk=book_id)
-    return render(request, "books/display_book.html", {"book": book})
+    username = request.user.username
+
+    return render(
+        request, "books/display_book.html", {"book": book, "username": username}
+    )
 
 
-def borrow_book(request, book_id):
-    borrower_name = request.POST["borrower_name"]
+@login_required()
+def borrow_book(request: HttpRequest, book_id):
+    username = request.user.username
 
     book = Book.objects.get(pk=book_id)
-    status, message = book.borrow(borrower_name)
+    status, message = book.borrow(username)
     if status is True:
         request.session["redirect_context"] = message
         return HttpResponseRedirect(reverse("books:index"))
@@ -38,9 +46,12 @@ def borrow_book(request, book_id):
         )
 
 
-def return_book(request, book_id):
+@login_required()
+def return_book(request: HttpRequest, book_id):
     book = Book.objects.get(pk=book_id)
-    status, message = book.return_book()
+    username = request.user.username
+
+    status, message = book.return_book(username)
 
     if status is True:
         request.session["redirect_context"] = message
@@ -53,6 +64,7 @@ def return_book(request, book_id):
         )
 
 
+@login_required()
 def borrow_record_list(request):
 
     form = BorrowRecordFilterForm(request.GET)

@@ -1,6 +1,6 @@
-from typing import Optional
 from django.db import models
 from django.utils import timezone
+from django.core.exceptions import PermissionDenied
 from django.core.validators import MinValueValidator, MaxValueValidator
 
 
@@ -33,10 +33,11 @@ class Book(models.Model):
         self.save()
         return None
 
-    def borrow(self, borrower_name: str):
+    def borrow(self, username: str):
+
         try:
             if self.is_available:
-                self.borrowrecord_set.create(borrower_name=borrower_name)
+                self.borrowrecord_set.create(borrower_name=username)  # type: ignore
                 self.is_available = False
                 self.save()
                 return True, "Book borrowed successfuly"
@@ -45,11 +46,15 @@ class Book(models.Model):
         except Exception as e:
             return False, str(e)
 
-    def return_book(self):
+    def return_book(self, username: str):
         try:
-            record: BorrowRecord = self.borrowrecord_set.all().order_by("-borrow_date")[
+            record: BorrowRecord = self.borrowrecord_set.all().order_by("-borrow_date")[  # type: ignore
                 0
             ]
+
+            if record.borrower_name != username:
+                raise PermissionDenied("This book is not registered to your name")
+
             record.return_now()
             record.save()
 
