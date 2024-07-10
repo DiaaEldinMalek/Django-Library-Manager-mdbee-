@@ -80,7 +80,7 @@ class BorrowRecord(models.Model):
 
     def is_returned(self):
         if self.return_date is None:
-            # book has not been returned and return date is not specified
+            # book has not been returned and return date is unset
             return False
 
         elif self.return_date > timezone.now():
@@ -88,8 +88,11 @@ class BorrowRecord(models.Model):
             return False
 
         elif self.return_date < timezone.now():
-            # realistically, the book can be unavailable for many other reasons (stolen, destroyed, etc.)
-            # but for my application I will strictly assume that no such cases exist and that this is a database fault
             return True
         else:
             raise Exception(f"Invalid value for field {self.return_date}")
+
+    @classmethod
+    def all_borrowers(cls):
+        all_borrowers = [record.borrower_name for record in BorrowRecord.objects.all()]
+        return all_borrowers

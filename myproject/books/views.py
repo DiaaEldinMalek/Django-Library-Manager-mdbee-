@@ -56,23 +56,8 @@ def return_book(request, book_id):
 def borrow_record_list(request):
 
     form = BorrowRecordFilterForm(request.GET)
-    borrow_records = BorrowRecord.objects.all()
-
     if form.is_valid():
-        if form.cleaned_data.get("borrower_name"):
-            borrow_records = borrow_records.filter(
-                borrower_name__icontains=form.cleaned_data["borrower_name"]
-            )
-        if form.cleaned_data.get("start_date"):
-            borrow_records = borrow_records.filter(
-                borrow_date__gte=form.cleaned_data["start_date"]
-            )
-        if form.cleaned_data.get("end_date"):
-            borrow_records = borrow_records.filter(
-                borrow_date__lte=form.cleaned_data["end_date"]
-            )
-        if form.cleaned_data.get("book"):
-            borrow_records = borrow_records.filter(book=form.cleaned_data["book"])
+        borrow_records = form.apply_filter_on_model()
 
     context = {"form": form, "borrow_records": borrow_records}
     return render(request, "books/borrow_record_list.html", context)
