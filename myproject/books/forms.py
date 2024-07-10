@@ -1,16 +1,17 @@
 # myapp/forms.py
 from django import forms
 from .models import BorrowRecord, Book
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
+users = User.objects.all()
 
 
 class BorrowRecordFilterForm(forms.Form):
     book = forms.ModelChoiceField(queryset=Book.objects.all(), required=False)
-    borrower_name = forms.CharField(max_length=100, required=False)
 
-    borrower_name = forms.ChoiceField(
-        choices=[(n, n) for n in BorrowRecord.all_borrowers()],
-        required=False,
-    )
+    borrow_name = forms.ModelChoiceField(queryset=User.objects.all(), required=False)
+
     borrowed_on_start = forms.DateTimeField(
         required=False,
         widget=forms.DateInput(attrs={"type": "date"}),

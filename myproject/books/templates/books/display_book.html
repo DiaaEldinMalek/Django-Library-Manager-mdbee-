@@ -1,7 +1,7 @@
 
 {% include "books/template_blocks/book_detail.html"%}
 {% if book.is_available %}
-    {% include "books/template_blocks/borrow_book.html"%}
+    {% include "books/template_blocks/available_book.html"%}
 {% else %}
-    {% include "books/template_blocks/return_book.html"%}
+    {% include "books/template_blocks/borrowed_book.html"%}
 {% endif %} 
