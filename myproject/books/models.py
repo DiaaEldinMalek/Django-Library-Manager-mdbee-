@@ -16,7 +16,8 @@ class Book(models.Model):
         return self.title
 
     def current_borrower(self):
-        """Return the last BorrowRecord if the book is currently borrowed. Otherwise, book is available and return None"""
+        """Return the last BorrowRecord if the book is currently borrowed.
+        Otherwise, book is available and return None"""
         if self.is_available:
             return None
 
@@ -34,7 +35,7 @@ class Book(models.Model):
         return None
 
     def borrow(self, username: str):
-
+        """Attempt to borrow the book under the curorent user"""
         try:
             if self.is_available:
                 self.borrowrecord_set.create(borrower_name=username)  # type: ignore
@@ -47,6 +48,8 @@ class Book(models.Model):
             return False, str(e)
 
     def return_book(self, username: str):
+        """Attempt to return the book if borrowed under the current user"""
+
         try:
             record: BorrowRecord = self.borrowrecord_set.all().order_by("-borrow_date")[  # type: ignore
                 0

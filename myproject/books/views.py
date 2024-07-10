@@ -8,7 +8,7 @@ from .forms import BorrowRecordFilterForm
 
 @login_required()
 def index(request):
-
+    """Index view that retrieves and lists all books. Front page of the `books` application"""
     all_books = Book.objects.all()
     context = {"books_list": all_books}
     try:
@@ -21,6 +21,7 @@ def index(request):
 
 @login_required()
 def detail(request: HttpRequest, book_id):
+    """Retrieves and presents details about the book and potential borrower"""
     book = get_object_or_404(Book, pk=book_id)
     username = request.user.username
 
@@ -31,6 +32,7 @@ def detail(request: HttpRequest, book_id):
 
 @login_required()
 def borrow_book(request: HttpRequest, book_id):
+    """Borrows a book under the current user name and writes to database"""
     username = request.user.username
 
     book = Book.objects.get(pk=book_id)
@@ -48,6 +50,7 @@ def borrow_book(request: HttpRequest, book_id):
 
 @login_required()
 def return_book(request: HttpRequest, book_id):
+    """Returns the book borrowed by the current user and updates the book on the database"""
     book = Book.objects.get(pk=book_id)
     username = request.user.username
 
@@ -66,7 +69,7 @@ def return_book(request: HttpRequest, book_id):
 
 @login_required()
 def borrow_record_list(request):
-
+    """Retrieves all BorrowRecords from database and displays them (after applying filter)"""
     form = BorrowRecordFilterForm(request.GET)
     if form.is_valid():
         borrow_records = form.apply_filter_on_model()

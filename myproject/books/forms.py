@@ -33,17 +33,6 @@ class BorrowRecordFilterForm(forms.Form):
         label="Return date (end range)",
     )
 
-    # def _post_clean(self):
-    #     cleaned_data = self.cleaned_data
-
-    #     if cleaned_data["borrowed_on_start"] > cleaned_data["borrowed_on_end"]:
-    #         raise ValidationError("Invalid borrow date range")
-
-    #     if cleaned_data["returned_before"] > cleaned_data["returned_after"]:
-    #         raise ValidationError("Invalid borrow date range")
-
-    #     return super().clean()
-
     def apply_filter_on_model(self):
         borrow_records = BorrowRecord.objects.all()
 

@@ -1,0 +1,48 @@
+Enabled accounts (usr, psw):
+
+    Admin:
+        - diaa
+        - 12345
+    User:
+        - Mayhoub
+        - bKVyf3N2xMQ29yP
+
+        - Osama
+        - Yada7LdnYSqJ8TX
+
+
+Setup instructions:
+
+1- Cd inside the project directory
+    - `cd mdbee_task`
+
+2- Create a python virtual environment and activate it, then install the project requirements
+    - `python -m venv .venv`
+    - `source .venv/bin/activate`
+    - `pip install -r requirements.txt`
+
+3- Run the application server from the command line
+    - `python manage.py runserver`
+
+4- Navigate to the main page (the first time this happens, a login page will appear). You can use any of the accounts listed at the top of this page to login
+    - [text](http://127.0.0.1:8000/books)
+
+5- View book pages which views book details as well as borrower status, and lets you borrow a book (if available) or return a book you borrowed (if you are authorized)
+
+6- To test authorization, you can follow these steps:
+    - Borrow a book under a given user
+    - [text](http://127.0.0.1:8000/accounts/login)
+    - Login with a different user credentials
+    - Attempt to return the book with the new user. You should not be able to do that, but you can still borrow a different book
+    - Go back and login with the main user. You will now be able to return the book
+
+7- To view Borrow Records:
+    - Borrow and return a couple of books under differnet users to populate the database
+    - Go over to [text](http://127.0.0.1:8000/books/borrow_records)
+
+
+
+
+Additional users can be created by heading to http://127.0.0.1:8000/accounts/signup
+
+Additional books can be added to the system (with admin credentials) at http://127.0.0.1:8000/admin
